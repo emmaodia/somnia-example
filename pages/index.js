@@ -88,6 +88,20 @@ export default function Home() {
     setAmountValue(e.target.value);
   };
 
+  const testSendTxn = async () => {
+    try {
+      const hash = await client.sendTransaction({
+        account: address,
+        to: "0xb6e4fa6ff2873480590c68D9Aa991e5BB14Dbf03",
+        value: 1000000000000000000n,
+      });
+
+      console.log(hash);
+    } catch (error) {
+      console.error(error, "failed");
+    }
+  };
+
   const sendTxn = async () => {
     console.log(amountValue, toValue);
     try {
@@ -108,6 +122,29 @@ export default function Home() {
     e.preventDefault();
     console.log("Input value:", toValue, amountValue);
     sendTxn();
+  };
+
+  const testERC = async () => {
+    try {
+      const { request } = await publicClient.simulateContract({
+        address: CONTRACT_ADDRESS,
+        abi: ABI,
+        functionName: "transfer",
+        // value: 1000000000000000000n,
+        args: [
+          "0xb6e4fa6ff2873480590c68d9aa991e5bb14dbf03",
+          1000000000000000000n,
+        ],
+        // parseEther(betAmount),
+        account: address,
+      });
+
+      console.log(request);
+      const hash = await client.writeContract(request);
+      console.log(hash);
+    } catch (error) {
+      console.error(error, "failed");
+    }
   };
 
   const nativeERC = async () => {
@@ -160,13 +197,13 @@ export default function Home() {
             Faucet
           </button>
           <button
-            onClick={sendTxn}
+            onClick={testSendTxn}
             className="px-5 py-2.5 mx-5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Test TXN
           </button>
           <button
-            onClick={nativeERC}
+            onClick={testERC}
             className="px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
             Test ERC20
