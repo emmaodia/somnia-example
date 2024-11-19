@@ -41,6 +41,8 @@ export default function Home() {
   const [address, setAddress] = useState(null);
   const [connected, setConnected] = useState(false);
   const [houseBalance, setHouseBalance] = useState("");
+  const [toValue, setToValue] = useState("");
+  const [amountValue, setAmountValue] = useState("");
 
   const connectToMetaMask = async () => {
     if (typeof window !== "undefined" && window.ethereum !== undefined) {
@@ -78,18 +80,50 @@ export default function Home() {
     }
   };
 
+  const handleTo = (e) => {
+    setToValue(e.target.value);
+  };
+
+  const handleAmount = (e) => {
+    setAmountValue(e.target.value);
+  };
+
   const sendTxn = async () => {
+    console.log(amountValue, toValue);
     try {
       const hash = await client.sendTransaction({
         account: address,
-        to: "0x70997970c51812dc3a010c7d01b50e0d17dc79c8",
-        value: 1000000000000000000n,
+        to: toValue,
+        value: amountValue,
+        // 1000000000000000000n,
       });
 
       console.log(hash);
     } catch (error) {
       console.error(error, "failed");
     }
+  };
+
+  const nativeERC = async () => {
+    const { request } = await publicClient.simulateContract({
+      address: CONTRACT_ADDRESS,
+      abi: ABI,
+      functionName: "transfer",
+      // value: 1000000000000000000n,
+      args: ["0xa42872B5359F6e3905BB031df62C3AADde532933", 100000000000000000n],
+      // parseEther(betAmount),
+      account: address,
+    });
+
+    console.log(request);
+    const hash = await client.writeContract(request);
+    console.log(hash);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Input value:", toValue, amountValue);
+    sendTxn();
   };
 
   useEffect(() => {
@@ -120,9 +154,15 @@ export default function Home() {
           >
             Test TXN
           </button>
+          <button
+            onClick={nativeERC}
+            className="px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          >
+            Test ERC20
+          </button>
           <div class="mt-2">
             <form
-              // onSubmit={handleSwap}
+              onSubmit={handleSubmit}
               className="flex max-w-md flex-col gap-4"
             >
               <div className="mt-3">
@@ -135,8 +175,8 @@ export default function Home() {
                 <input
                   type="text"
                   id="amount-input"
-                  // value={amount}
-                  // onChange={(e) => setAmount(e.target.value)}
+                  value={toValue}
+                  onChange={handleTo}
                   placeholder="Enter Recipient Address"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required
@@ -152,8 +192,8 @@ export default function Home() {
                 <input
                   type="text"
                   id="amount-input"
-                  // value={amount}
-                  // onChange={(e) => setAmount(e.target.value)}
+                  value={amountValue}
+                  onChange={handleAmount}
                   placeholder="Enter amount in ETH"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required
