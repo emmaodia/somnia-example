@@ -114,6 +114,7 @@ export default function Home() {
       });
 
       console.log(hash);
+      setLoading(false);
     } catch (error) {
       console.error(error, "failed");
     }
@@ -121,6 +122,7 @@ export default function Home() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     console.log("Input value:", toValue, amountValue);
     sendTxn();
   };
@@ -164,6 +166,7 @@ export default function Home() {
       console.log(request);
       const hash = await client.writeContract(request);
       console.log(hash);
+      setLoading(false);
     } catch (error) {
       console.error(error, "failed");
     }
@@ -171,6 +174,7 @@ export default function Home() {
 
   const handleSubmitERC = (e) => {
     e.preventDefault();
+    setLoading(true);
     console.log("Input value:", toValue, amountValue);
     nativeERC();
   };
@@ -252,9 +256,9 @@ export default function Home() {
               <button
                 type="submit"
                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                // disabled={loading}
+                disabled={loading}
               >
-                {/* {loading ? "Swapping..." : "Swap"} */}Transfer
+                {loading ? "processing..." : "Transfer"}
               </button>
             </form>
           </div>
