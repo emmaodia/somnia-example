@@ -43,6 +43,7 @@ export default function Home() {
   const [houseBalance, setHouseBalance] = useState("");
   const [toValue, setToValue] = useState("");
   const [amountValue, setAmountValue] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const connectToMetaMask = async () => {
     if (typeof window !== "undefined" && window.ethereum !== undefined) {
@@ -155,7 +156,7 @@ export default function Home() {
         abi: ABI,
         functionName: "transfer",
         // value: 1000000000000000000n,
-        args: [toValue, amountValue],
+        args: [toValue, parseEther(amountValue)],
         // parseEther(betAmount),
         account: address,
       });
@@ -301,9 +302,9 @@ export default function Home() {
               <button
                 type="submit"
                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                // disabled={loading}
+                disabled={loading}
               >
-                {/* {loading ? "Swapping..." : "Swap"} */}Transfer
+                {loading ? "Processing..." : "Transfer"}
               </button>
             </form>
           </div>
