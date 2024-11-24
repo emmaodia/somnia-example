@@ -213,7 +213,7 @@ export default function Home() {
           >
             Test ERC20
           </button>
-          <div class="mt-10">
+          <div className="mt-10">
             <form
               onSubmit={handleSubmit}
               className="flex max-w-md flex-col gap-4"
